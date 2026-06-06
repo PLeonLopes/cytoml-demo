@@ -8,16 +8,10 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-# Singleton — instanciado apenas na primeira chamada
 _model = None
 
 
 def get_model() -> YOLO:
-    """
-    Lazy loading: carrega o modelo YOLO uma única vez e reutiliza.
-    Falha na primeira requisição (não na subida do servidor),
-    retornando um erro HTTP 500 controlado pela view.
-    """
     global _model
     if _model is None:
         model_path = settings.YOLO_MODEL_PATH
@@ -28,10 +22,6 @@ def get_model() -> YOLO:
 
 
 def run_inference(image_file) -> dict:
-    """
-    Recebe um arquivo de imagem, roda a inferência do YOLO
-    e retorna a imagem anotada em base64 + dados das detecções.
-    """
     model = get_model()
 
     image = Image.open(image_file).convert("RGB")
@@ -60,8 +50,13 @@ def run_inference(image_file) -> dict:
             }
         )
 
+    # Média dos confidence scores
+    total = len(detections)
+    avg_accuracy = round(sum(d["confidence"] for d in detections) / total, 4) if total > 0 else 0.0
+
     return {
         "annotated_image": f"data:image/png;base64,{encoded_image}",
-        "total_detections": len(detections),
+        "total_detections": total,
+        "avg_accuracy": avg_accuracy,
         "detections": detections,
     }

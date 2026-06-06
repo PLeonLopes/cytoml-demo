@@ -15,4 +15,5 @@ class DetectionSerializer(serializers.Serializer):
 class AnalysisResultSerializer(serializers.Serializer):
     annotated_image  = serializers.CharField()   # base64
     total_detections = serializers.IntegerField()
+    avg_accuracy     = serializers.FloatField()
     detections       = DetectionSerializer(many=True)
