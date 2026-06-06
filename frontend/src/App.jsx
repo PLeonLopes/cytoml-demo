@@ -11,8 +11,8 @@ function App() {
       <Header />
       <main>
         <Hero />
-        <UploadSection />
         <GallerySection />
+        <UploadSection />
         <AboutSection />
       </main>
       <Footer />
