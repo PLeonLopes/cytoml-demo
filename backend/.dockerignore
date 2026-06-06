@@ -1,0 +1,36 @@
+# Controle de versão
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info
+.eggs
+
+# Ambientes virtuais
+.venv
+venv
+env
+
+# Django
+*.log
+db.sqlite3
+media/
+
+# Testes e cobertura
+.pytest_cache
+.coverage
+htmlcov/
+
+# IDEs
+.vscode
+.idea
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
