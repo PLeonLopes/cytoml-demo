@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from .serializers import AnalysisInputSerializer, AnalysisResultSerializer
 from .services.yolo_service import run_inference
@@ -10,7 +10,7 @@ from .services.yolo_service import run_inference
 # Create your views here.
 
 class AnalyzeImageView(APIView):
-    parser_classes = [MultiPartParser]
+    parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request):
         serializer = AnalysisInputSerializer(data=request.data)
