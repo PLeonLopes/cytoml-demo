@@ -3,8 +3,8 @@ import { analyzeImage } from "../services/api";
 
 // Amostras de Sample
 const SAMPLES = [
-  { id: 1, src: "/samples/1_CN_104081.jpg", label: "Amostra 01", description: "Cariótipo Normal" },
-  { id: 2, src: "/samples/2_CN_104173.jpg", label: "Amostra 02", description: "Cariótipo Normal" },
+  { id: 1, src: "/samples/1_CN_104173.jpg", label: "Amostra 01", description: "Cariótipo Normal" },
+  { id: 2, src: "/samples/2_CN_104081.jpg", label: "Amostra 02", description: "Cariótipo Normal" },
   { id: 3, src: "/samples/3_TTT21_1053273.jpg", label: "Amostra 03", description: "Trissomia do cromossomo 21" },
   { id: 4, src: "/samples/4_Tx_1052773.jpg", label: "Amostra 04", description: "Síndrome de Turner" },
   { id: 5, src: "/samples/5_TTT8_1050762.jpg", label: "Amostra 05", description: "Trissomia do Cromossomo 8 - Síndrome de Warkany" },
