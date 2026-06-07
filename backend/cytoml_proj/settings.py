@@ -23,12 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
-SECRET_KEY = 'django-insecure-3m$t=1x&c5@#i7o#08e_dbk#g(&s5n6o4p^!1pzhmswhqd(_@@'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-3m$t=1x&c5@#i7o#08e_dbk#g(&s5n6o4p^!1pzhmswhqd(_@@')
 
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'cytoml-demo-1.onrender.com').split(',')
 
 # Application definition
 
@@ -68,6 +67,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser',
         'rest_framework.parsers.JSONParser',
     ],
+    'EXCEPTION_HANDLER': 'apps.analysis.exceptions.custom_exception_handler',
 }
 
 # Media files
@@ -91,21 +91,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cytoml_proj.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # SQLITE3
-'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-'''
 
 # POSTGRESQL
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -116,6 +114,7 @@ DATABASES = {
         'PORT': os.getenv('POSTGRES_PORT', '5432'),
     }
 }
+'''
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -156,3 +155,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+YOLO_MODEL_PATH = os.getenv("YOLO_MODEL_PATH", str(BASE_DIR / "models" / "best.onnx"))
