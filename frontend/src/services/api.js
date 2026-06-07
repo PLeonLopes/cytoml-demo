@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || "https://cytoml-demo-1.onrender.com";
+const API_URL = import.meta.env.VITE_API_URL || "https://cytoml-api-762616154335.southamerica-east1.run.app";
 
 // Health Check endpoint
 export async function checkHealth() {
