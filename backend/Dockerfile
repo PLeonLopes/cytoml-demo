@@ -22,7 +22,8 @@ RUN pip install --upgrade pip && \
 
 COPY . .
 
-EXPOSE 8000
+EXPOSE 8080
 
-# Gunicorn para produção (Render) — migrate roda antes de subir
-CMD ["sh", "-c", "python manage.py migrate && gunicorn cytoml_proj.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120"]
+# Config GCP
+CMD ["sh", "-c", "python manage.py migrate && gunicorn cytoml_proj.wsgi:application --bind 0.0.0.0:${PORT:-8080} --workers 1 --timeout 300"]
+
