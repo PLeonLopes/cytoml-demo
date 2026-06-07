@@ -67,6 +67,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser',
         'rest_framework.parsers.JSONParser',
     ],
+    'EXCEPTION_HANDLER': 'apps.analysis.exceptions.custom_exception_handler',
 }
 
 # Media files

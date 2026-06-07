@@ -6,14 +6,22 @@ class AnalysisInputSerializer(serializers.Serializer):
 
 
 class DetectionSerializer(serializers.Serializer):
-    class_id    = serializers.IntegerField()
-    class_name  = serializers.CharField()
-    confidence  = serializers.FloatField()
-    bbox        = serializers.ListField(child=serializers.FloatField())
+    id = serializers.IntegerField()
+    class_id = serializers.IntegerField()
+    class_name = serializers.CharField()
+    confidence = serializers.FloatField()
+    bbox = serializers.ListField(child=serializers.FloatField())
+
+
+class AnalysisSummarySerializer(serializers.Serializer):
+    total_detections = serializers.IntegerField()
+    inference_time_ms = serializers.FloatField()
+    avg_confidence = serializers.FloatField()
+    min_confidence = serializers.FloatField()
+    max_confidence = serializers.FloatField()
 
 
 class AnalysisResultSerializer(serializers.Serializer):
-    annotated_image  = serializers.CharField()   # base64
-    total_detections = serializers.IntegerField()
-    avg_accuracy     = serializers.FloatField()
-    detections       = DetectionSerializer(many=True)
+    annotated_image = serializers.CharField()
+    analysis = AnalysisSummarySerializer()
+    detections = DetectionSerializer(many=True)

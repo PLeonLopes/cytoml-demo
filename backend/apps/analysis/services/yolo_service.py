@@ -2,7 +2,7 @@ import io
 import base64
 import logging
 import ast
-
+import time
 import numpy as np
 import onnxruntime as ort
 from PIL import Image, ImageDraw
@@ -38,7 +38,7 @@ def _get_class_names(session: ort.InferenceSession) -> dict:
     return {}
 
 
-def _preprocess(image: Image.Image) -> tuple[np.ndarray, float, float, int, int]:
+def _preprocess(image: Image.Image) -> tuple[np.ndarray, float, int, int]:
     """Letterbox: redimensiona mantendo aspect ratio com padding cinza."""
     orig_w, orig_h = image.size
     scale = min(_input_size / orig_w, _input_size / orig_h)
@@ -97,12 +97,13 @@ def _postprocess_yolo26(
 
 def _draw_boxes(image: Image.Image, detections: list[dict]) -> Image.Image:
     """Desenha bounding boxes na imagem usando só Pillow."""
+    COLOR = "#1d5fa8"
     draw = ImageDraw.Draw(image)
     for det in detections:
         x1, y1, x2, y2 = det["bbox"]
-        label = f"{det['class_name']} {det['confidence']:.2f}"
-        draw.rectangle([x1, y1, x2, y2], outline="red", width=2)
-        draw.text((x1, max(0, y1 - 12)), label, fill="red")
+        label = f"{det['confidence']:.2%}"
+        draw.rectangle([x1, y1, x2, y2], outline=COLOR, width=2)
+        draw.text((x1, max(0, y1 - 12)), label, fill=COLOR)
     return image
 
 
@@ -114,12 +115,18 @@ def run_inference(image_file) -> dict:
     # Pré-processamento
     input_tensor, scale, pad_x, pad_y = _preprocess(image)
 
-    # Inferência
+    # Inferência — mede só o tempo do ONNX
     input_name = session.get_inputs()[0].name
+    t_start = time.perf_counter()
     outputs = session.run(None, {input_name: input_tensor})
+    inference_time_ms = round((time.perf_counter() - t_start) * 1000, 2)
 
-    # Pós-processamento (simples! YOLO26 já é end-to-end)
+    # Pós-processamento
     detections = _postprocess_yolo26(outputs, scale, pad_x, pad_y, class_names)
+
+    # Adiciona id incremental em cada detecção
+    for i, det in enumerate(detections):
+        det["id"] = i + 1
 
     # Anotação
     annotated = _draw_boxes(image.copy(), detections)
@@ -127,12 +134,18 @@ def run_inference(image_file) -> dict:
     annotated.save(buffer, format="PNG")
     encoded_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
 
+    # Métricas
     total = len(detections)
-    avg_accuracy = round(sum(d["confidence"] for d in detections) / total, 4) if total > 0 else 0.0
+    confidences = [d["confidence"] for d in detections]
 
     return {
         "annotated_image": f"data:image/png;base64,{encoded_image}",
-        "total_detections": total,
-        "avg_accuracy": avg_accuracy,
+        "analysis": {
+            "total_detections": total,
+            "inference_time_ms": inference_time_ms,
+            "avg_confidence": round(sum(confidences) / total, 4) if total > 0 else 0.0,
+            "min_confidence": round(min(confidences), 4) if total > 0 else 0.0,
+            "max_confidence": round(max(confidences), 4) if total > 0 else 0.0,
+        },
         "detections": detections,
     }

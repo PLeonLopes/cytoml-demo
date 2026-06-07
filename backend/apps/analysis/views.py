@@ -1,15 +1,15 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 
+from .mixins import StandardResponseMixin
 from .serializers import AnalysisInputSerializer, AnalysisResultSerializer
 from .services.yolo_service import run_inference
 
 # Create your views here.
 
-class AnalyzeImageView(APIView):
+class AnalyzeImageView(StandardResponseMixin, APIView):
     parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request):
@@ -18,21 +18,25 @@ class AnalyzeImageView(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        image_file = serializer.validated_data['image']
+        image_file = serializer.validated_data["image"]
 
         try:
             result = run_inference(image_file)
+        except ValueError as e:
+            return Response(
+                {"code": "INVALID_IMAGE", "message": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             return Response(
-                {'error': f'Erro na inferência: {str(e)}'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {"code": "INFERENCE_ERROR", "message": f"Erro na inferência: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
         output = AnalysisResultSerializer(result)
         return Response(output.data, status=status.HTTP_200_OK)
 
 
-class HealthCheckView(APIView):
-    """Endpoint simples para verificar se o serviço está vivo."""
+class HealthCheckView(StandardResponseMixin, APIView):
     def get(self, request):
-        return Response({'status': 'ok'}, status=status.HTTP_200_OK)
+        return Response({"status": "ok"}, status=status.HTTP_200_OK)
