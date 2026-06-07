@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+* {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Scroll suave global */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Remove outline padrão feio, mantém acessibilidade */
+:focus-visible {
+  outline: 2px solid #1d5fa8;
+  outline-offset: 2px;
+}
