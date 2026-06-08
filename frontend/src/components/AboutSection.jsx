@@ -48,16 +48,15 @@ export default function AboutSection() {
               <p className="leading-relaxed">
                 Utilizando o modelo{" "}
                 <span className="font-semibold text-[#1a1a1a]">YOLO</span>{" "}
-                (You Only Look Once), o sistema é capaz de detectar, segmentar e
-                classificar cromossomos em imagens citogenéticas, reduzindo o
+                (You Only Look Once), o sistema é capaz de detectar imagens citogenéticas, reduzindo o
                 tempo e a subjetividade do processo manual.
               </p>
               <p className="leading-relaxed">
-                O back-end foi desenvolvido em{" "}
+                Essa demo foi desenvolvido em{" "}
                 <span className="font-semibold text-[#1a1a1a]">
                   Django REST Framework
                 </span>{" "}
-                e o front-end em{" "}
+                e a visualização em{" "}
                 <span className="font-semibold text-[#1a1a1a]">
                   React + Vite
                 </span>
@@ -89,6 +88,31 @@ export default function AboutSection() {
               ))}
             </div>
           </div>
+        </div>
+        {/* Banner Saiba Mais */}
+        <div className="mt-16 border-l-4 border-[#1d5fa8] bg-[#e8f0fb] rounded-r-2xl px-8 py-8 flex items-center justify-between gap-6 flex-wrap">
+          <div>
+            <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-[#1d5fa8]">
+              Cyto Compendium
+            </p>
+            <h3 className="text-xl font-bold text-[#1a1a1a]">
+              Quer saber mais sobre o projeto?
+            </h3>
+            <p className="mt-1 text-sm leading-relaxed text-[#6b6b6b]">
+              Repositório público com artigos, repositórios e recursos relacionados à citogenética e visão computacional.
+            </p>
+          </div>
+          <a
+            href="https://pleonlopes.github.io/cyto-compendium/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 inline-flex items-center gap-2 rounded-md bg-[#1d5fa8] px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-[#174d8a] active:scale-95"
+          >
+            Acessar site
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </a>
         </div>
       </div>
     </section>

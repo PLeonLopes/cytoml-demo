@@ -146,6 +146,13 @@ export default function GallerySection() {
     setError(null);
     setIsAnalyzing(true);
 
+    // scroll só no mobile/tablet
+    if (window.innerWidth < 1024) {
+      setTimeout(() => {
+        document.getElementById("gallery-result")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+    }
+
     try {
       const file = await urlToFile(sample.src, `${sample.label}.jpg`);
       const data = await analyzeImage(file);
@@ -208,7 +215,7 @@ export default function GallerySection() {
           </div>
 
           {/* ── Painel lateral de resultado ── */}
-          <div className="flex flex-col rounded-2xl border border-[#e0ddd6] bg-[#f5f4f0]">
+          <div id="gallery-result" className="flex flex-col rounded-2xl border border-[#e0ddd6] bg-[#f5f4f0]">
             <div className="border-b border-[#e0ddd6] px-6 py-4">
               <h3 className="text-sm font-semibold text-[#1a1a1a]">
                 {selected ? selected.label : "Resultado"}
