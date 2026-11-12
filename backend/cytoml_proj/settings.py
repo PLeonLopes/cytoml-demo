@@ -158,7 +158,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
@@ -170,3 +169,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 YOLO_MODEL_PATH = os.getenv("YOLO_MODEL_PATH", str(BASE_DIR / "models" / "best.onnx"))
+
+# Modelos finais do artigo (CytoML): YOLO26m pré-processado e ResNet-50
+DETECTOR_MODEL_PATH = os.getenv("DETECTOR_MODEL_PATH", str(BASE_DIR / "models" / "detector.onnx"))
+CLASSIFIER_MODEL_PATH = os.getenv("CLASSIFIER_MODEL_PATH", str(BASE_DIR / "models" / "classifier.onnx"))
