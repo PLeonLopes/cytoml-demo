@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -22,10 +23,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-3m$t=1x&c5@#i7o#08e_dbk#g(&s5n6o4p^!1pzhmswhqd(_@@')
-
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
+
+# A chave vem sempre do ambiente. Em desenvolvimento (DEBUG=True) há uma chave
+# local de uso exclusivo da máquina; em produção, a ausência dela impede o boot.
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    if not DEBUG:
+        raise ImproperlyConfigured('Defina a variável de ambiente SECRET_KEY (obrigatória com DEBUG=False).')
+    SECRET_KEY = 'django-insecure-dev-only'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
@@ -54,7 +60,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+# Só os frontends publicados e o Vite local podem chamar a API.
+CORS_ALLOWED_ORIGINS = os.getenv(
+    'CORS_ALLOWED_ORIGINS',
+    'https://cytoml-demo.vercel.app,'
+    'https://cytoml-demo.onrender.com,'
+    'http://localhost:5173,'
+    'http://127.0.0.1:5173',
+).split(',')
 
 ROOT_URLCONF = 'cytoml_proj.urls'
 
