@@ -23,7 +23,9 @@ def get_pipeline() -> KaryotypePipeline:
                     settings.DETECTOR_MODEL_PATH,
                     settings.CLASSIFIER_MODEL_PATH,
                 )
-                _pipeline = KaryotypePipeline(settings.DETECTOR_MODEL_PATH, settings.CLASSIFIER_MODEL_PATH)
+                _pipeline = KaryotypePipeline(
+                    settings.DETECTOR_MODEL_PATH, settings.CLASSIFIER_MODEL_PATH, threads=settings.ORT_THREADS
+                )
                 logger.info("Modelos carregados.")
     return _pipeline
 

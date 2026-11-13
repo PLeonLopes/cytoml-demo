@@ -171,3 +171,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Modelos finais do artigo (CytoML): YOLO26m pré-processado e ResNet-50
 DETECTOR_MODEL_PATH = os.getenv("DETECTOR_MODEL_PATH", str(BASE_DIR / "models" / "detector.onnx"))
 CLASSIFIER_MODEL_PATH = os.getenv("CLASSIFIER_MODEL_PATH", str(BASE_DIR / "models" / "classifier.onnx"))
+
+# Threads do onnxruntime por modelo. Sem limite, ele usa todos os núcleos que enxerga na máquina
+# (16 num container limitado a 2 CPUs), que disputam as 2 vCPUs do Cloud Run: 5,3 s por metáfase contra 2,1 s.
+ORT_THREADS = int(os.getenv("ORT_THREADS", "2"))
