@@ -179,7 +179,9 @@ function ImageModal({ src, alt, onClose }) {
 }
 
 // Caixa da imagem com abas na ordem da pipeline (Original → … → Cariograma) e botão de ampliar
-export function ImageTabs({ images, original, heightClass = "h-96" }) {
+// A imagem ocupa toda a largura e a altura acompanha a proporção dela (sem faixas nas laterais);
+// `maxHeightClass` só limita imagens muito altas.
+export function ImageTabs({ images, original, maxHeightClass = "max-h-[70vh]" }) {
   const sources = { ...images, original };
   const tabs = TABS.filter((t) => sources[t.key]);
   const [active, setActive] = useState(sources.karyogram ? "karyogram" : "annotated");
@@ -221,7 +223,7 @@ export function ImageTabs({ images, original, heightClass = "h-96" }) {
         </button>
       </div>
       <button onClick={() => setZoomed(true)} className="block w-full cursor-zoom-in">
-        <img src={sources[current.key]} alt={current.label} className={`${heightClass} w-full object-contain`} />
+        <img src={sources[current.key]} alt={current.label} className={`block h-auto w-full ${maxHeightClass} object-contain`} />
       </button>
       {zoomed && <ImageModal src={sources[current.key]} alt={current.label} onClose={() => setZoomed(false)} />}
     </div>
