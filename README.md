@@ -74,7 +74,8 @@ Open `.env` and fill in the required values:
 |----------|-------------|
 | `DEBUG` | Django debug mode (`True` / `False`) |
 | `ALLOWED_HOSTS` | Comma-separated list of allowed hosts |
-| `YOLO_MODEL_PATH` | Path to ONNX model (default: `models/best.onnx`) |
+| `DETECTOR_MODEL_PATH` | Path to the detector ONNX model (default: `models/detector.onnx`) |
+| `CLASSIFIER_MODEL_PATH` | Path to the classifier ONNX model (default: `models/classifier.onnx`) |
 
 ### 4. Start the Backend
 

@@ -1,11 +1,16 @@
+import logging
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 
 from .mixins import StandardResponseMixin
-from .serializers import AnalysisInputSerializer, AnalysisResultSerializer
-from .services.yolo_service import run_inference
+from .serializers import AnalysisInputSerializer
+from .services.analysis import analyze
+from .services.models import models_loaded
+
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 
@@ -21,22 +26,22 @@ class AnalyzeImageView(StandardResponseMixin, APIView):
         image_file = serializer.validated_data["image"]
 
         try:
-            result = run_inference(image_file)
+            result = analyze(image_file.read())
         except ValueError as e:
             return Response(
                 {"code": "INVALID_IMAGE", "message": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except Exception as e:
+        except Exception:
+            logger.exception("Erro na análise da imagem")
             return Response(
-                {"code": "INFERENCE_ERROR", "message": f"Erro na inferência: {str(e)}"},
+                {"code": "INFERENCE_ERROR", "message": "Erro interno ao analisar a imagem."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-        output = AnalysisResultSerializer(result)
-        return Response(output.data, status=status.HTTP_200_OK)
+        return Response(result, status=status.HTTP_200_OK)
 
 
 class HealthCheckView(StandardResponseMixin, APIView):
     def get(self, request):
-        return Response({"status": "ok"}, status=status.HTTP_200_OK)
+        return Response({"status": "ok", "models_loaded": models_loaded()}, status=status.HTTP_200_OK)
