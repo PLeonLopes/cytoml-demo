@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+import FullscreenViewer from "./FullscreenViewer";
 
 // Peças do resultado do cariótipo, usadas pelos painéis do upload e da galeria.
 
@@ -150,39 +152,10 @@ export function KaryotypeSummary({ karyotype, warnings = [] }) {
   );
 }
 
-function ImageModal({ src, alt, onClose }) {
-  useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
-
-  return (
-    <div
-      onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
-    >
-      <div className="relative max-h-full max-w-6xl overflow-auto rounded-xl bg-white p-2 shadow-xl">
-        <img src={src} alt={alt} className="max-h-[88vh] w-auto object-contain" />
-        <button
-          onClick={onClose}
-          className="absolute right-2 top-2 rounded-full bg-white/90 p-1.5 text-[#6b6b6b] shadow-sm transition hover:text-[#1a1a1a]"
-          aria-label="Fechar"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// Caixa da imagem com abas na ordem da pipeline (Original → … → Cariograma) e botão de ampliar
 // A imagem ocupa toda a largura e a altura acompanha a proporção dela (sem faixas nas laterais);
 // `maxHeightClass` só limita imagens muito altas.
-export function ImageTabs({ images, original, maxHeightClass = "max-h-[70vh]" }) {
-  const sources = { ...images, original };
+export function ImageTabs({ result, original, maxHeightClass = "max-h-[70vh]" }) {
+  const sources = { ...result.images, original };
   const tabs = TABS.filter((t) => sources[t.key]);
   const [active, setActive] = useState(sources.karyogram ? "karyogram" : "annotated");
   const [zoomed, setZoomed] = useState(false);
@@ -225,7 +198,22 @@ export function ImageTabs({ images, original, maxHeightClass = "max-h-[70vh]" })
       <button onClick={() => setZoomed(true)} className="block w-full cursor-zoom-in">
         <img src={sources[current.key]} alt={current.label} className={`block h-auto w-full ${maxHeightClass} object-contain`} />
       </button>
-      {zoomed && <ImageModal src={sources[current.key]} alt={current.label} onClose={() => setZoomed(false)} />}
+      {zoomed && (
+        <FullscreenViewer
+          steps={tabs}
+          sources={sources}
+          initialKey={current.key}
+          chromosomes={result.chromosomes}
+          alerts={result.karyotype.alerts}
+          onClose={() => setZoomed(false)}
+          header={
+            <>
+              <span className="text-xl font-bold tracking-tight">{result.karyotype.formula}</span>
+              <StatusBadge code={result.karyotype.status_code} />
+            </>
+          }
+        />
+      )}
     </div>
   );
 }

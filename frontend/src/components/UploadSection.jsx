@@ -69,7 +69,7 @@ function ResultPanel({ result, original, onReset }) {
   return (
     <div className="flex flex-1 flex-col gap-4">
       {/* Imagem com abas, da original ao cariograma (abre no cariograma) */}
-      <ImageTabs images={result.images} original={original} maxHeightClass="max-h-[70vh]" />
+      <ImageTabs result={result} original={original} maxHeightClass="max-h-[70vh]" />
 
       {/* Fórmula, selo e leitura do resultado */}
       <KaryotypeSummary karyotype={result.karyotype} warnings={result.warnings} />
