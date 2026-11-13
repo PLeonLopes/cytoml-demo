@@ -26,15 +26,15 @@ export default function Hero() {
         </div>
 
         {/* Título */}
-        <h1 className="mx-auto mb-4 max-w-3xl text-3xl md:text-5xl font-bold leading-tight tracking-tight text-[#1a1a1a]">
-          Análise Automatizada de{" "}
-          <span className="text-[#1d5fa8]">Cariótipos</span> e identificação de{" "}
+        <h1 className="mx-auto mb-4 max-w-4xl text-3xl md:text-[2.75rem] font-bold leading-tight tracking-tight text-[#1a1a1a]">
+          Uso de Visão Computacional para Análise Automatizada de{" "}
+          <span className="text-[#1d5fa8]">Cariótipos</span> e Identificação de{" "}
           <span className="text-[#1d5fa8]">Aneuploidias</span>
         </h1>
 
         {/* Subtítulo */}
         <p className="mx-auto mb-8 max-w-2xl text-base md:text-lg leading-relaxed text-[#6b6b6b]">
-          Sistema com modelo YOLO para detecção e classificação automática de cromossomos. Faça o upload de um exame e obtenha a análise em segundos.
+          Detecção com YOLO26m e classificação com ResNet-50 para montar o cariótipo automaticamente. Envie uma metáfase e obtenha a análise em segundos.
         </p>
 
         {/* Ações */}

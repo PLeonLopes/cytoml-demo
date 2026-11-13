@@ -122,7 +122,7 @@ export default function GallerySection() {
           </p>
           <h2 className="text-3xl font-bold text-[#1a1a1a]">Exemplos de Análise</h2>
           <p className="mt-2 text-[#6b6b6b]">
-            Clique em uma das amostras abaixo para ver o modelo em ação.
+            Clique em uma das amostras do conjunto de teste para ver a análise em ação.
           </p>
         </div>
 

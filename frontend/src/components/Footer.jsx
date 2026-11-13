@@ -18,7 +18,7 @@ export default function Footer() {
 
           {/* Info */}
           <p className="text-center text-xs text-[#9e9e9e]">
-            Trabalho de Conclusão de Curso 2026.1 · Sistema de Cariotipagem Automatizada
+            Trabalho de Conclusão de Curso 2026.2 · Demonstração de Cariotipagem Automatizada
           </p>
 
           {/* Aviso clínico */}
