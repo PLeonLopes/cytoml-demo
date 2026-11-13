@@ -33,40 +33,6 @@ function StatCard({ label, value, info }) {
   );
 }
 
-// Redimensionamento
-const MAX_SIZE = 1024;
-const QUALITY  = 0.85;
-
-function resizeImage(file) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      let { width, height } = img;
-      if (width > MAX_SIZE || height > MAX_SIZE) {
-        if (width > height) {
-          height = Math.round((height * MAX_SIZE) / width);
-          width  = MAX_SIZE;
-        } else {
-          width  = Math.round((width * MAX_SIZE) / height);
-          height = MAX_SIZE;
-        }
-      }
-      const canvas = document.createElement("canvas");
-      canvas.width  = width;
-      canvas.height = height;
-      canvas.getContext("2d").drawImage(img, 0, 0, width, height);
-      canvas.toBlob(
-        (blob) => resolve(new File([blob], file.name, { type: "image/jpeg" })),
-        "image/jpeg",
-        QUALITY
-      );
-    };
-    img.src = url;
-  });
-}
-
 // Painel de resultado
 function ResultPanel({ result, original, onReset }) {
   return (
@@ -115,7 +81,6 @@ export default function UploadSection() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult]           = useState(null);
   const [error, setError]             = useState(null);
-  const [imageInfo, setImageInfo]     = useState(null);
   const fileInputRef = useRef(null);
 
   const handleFile = (file) => {
@@ -123,7 +88,6 @@ export default function UploadSection() {
     setImage(file);
     setResult(null);
     setError(null);
-    setImageInfo(null);
     const reader = new FileReader();
     reader.onload = (e) => setPreview(e.target.result);
     reader.readAsDataURL(file);
@@ -141,11 +105,8 @@ export default function UploadSection() {
     setResult(null);
     setError(null);
     try {
-      const originalKB = (image.size / 1024).toFixed(0);
-      const resized     = await resizeImage(image);
-      const resizedKB   = (resized.size / 1024).toFixed(0);
-      setImageInfo({ originalKB, resizedKB });
-      const data = await analyzeImage(resized);
+      // envia o arquivo original: a pipeline analisa exatamente a imagem enviada
+      const data = await analyzeImage(image);
       setResult(data);
     } catch (err) {
       setError(err.message || "Erro ao conectar com o servidor.");
@@ -159,7 +120,6 @@ export default function UploadSection() {
     setPreview(null);
     setResult(null);
     setError(null);
-    setImageInfo(null);
   };
 
   return (
@@ -229,9 +189,9 @@ export default function UploadSection() {
 
                   <div className="flex items-center justify-between">
                     <p className="truncate text-xs text-[#9e9e9e]">{image?.name}</p>
-                    {imageInfo && (
+                    {image && (
                       <span className="ml-2 shrink-0 rounded-full bg-[#e8f0fb] px-2 py-0.5 text-[10px] font-medium text-[#1d5fa8]">
-                        {imageInfo.originalKB} KB → {imageInfo.resizedKB} KB
+                        {(image.size / 1024).toFixed(0)} KB
                       </span>
                     )}
                   </div>
