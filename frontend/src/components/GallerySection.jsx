@@ -1,24 +1,18 @@
 import { useState } from "react";
 import { analyzeImage } from "../services/api";
+import { resultStats } from "../services/result";
+import { ImageTabs, InfoTip, KaryotypeSummary, PairCounts } from "./KaryotypeResult";
 
-// Amostras de Sample
+// Metáfases do conjunto de teste, nunca vistas no treino.
+// A descrição traz a anotação do dataset, ou seja, o resultado esperado.
 const SAMPLES = [
-  { id: 1, src: "/samples/1_CN_104173.jpg", label: "Amostra 01", description: "Cariótipo Normal" },
-  { id: 2, src: "/samples/2_CN_104081.jpg", label: "Amostra 02", description: "Cariótipo Normal" },
-  { id: 3, src: "/samples/3_TTT21_1053273.jpg", label: "Amostra 03", description: "Trissomia do cromossomo 21" },
-  { id: 4, src: "/samples/4_Tx_1052773.jpg", label: "Amostra 04", description: "Síndrome de Turner" },
-  { id: 5, src: "/samples/5_TTT8_1050762.jpg", label: "Amostra 05", description: "Trissomia do Cromossomo 8 - Síndrome de Warkany" },
-  { id: 6, src: "/samples/6_TTT18_1051261.jpg", label: "Amostra 06", description: "Trissomia do cromossomo 18 - Síndrome de Edwards" },
+  { id: 1, src: "/samples/1053833.jpg", label: "Amostra 01", description: "Normal (46,XX) · Figura 4 do artigo" },
+  { id: 2, src: "/samples/1091464.jpg", label: "Amostra 02", description: "Normal (46,XY)" },
+  { id: 3, src: "/samples/1055911.jpg", label: "Amostra 03", description: "Síndrome de Down (47,XY,+21)" },
+  { id: 4, src: "/samples/1050431.jpg", label: "Amostra 04", description: "Síndrome de Edwards (47,XX,+18)" },
+  { id: 5, src: "/samples/1070822.jpg", label: "Amostra 05", description: "Síndrome de Turner (45,X)" },
+  { id: 6, src: "/samples/1080152.jpg", label: "Amostra 06", description: "Síndrome de Klinefelter (47,XXY)" },
 ];
-
-// Helpers
-function formatTime(ms) {
-  if (ms < 1000) return `${Math.round(ms)} ms`;
-  return `${(ms / 1000).toFixed(1)} s`;
-}
-function formatPct(value) {
-  return `${(value * 100).toFixed(1)}%`;
-}
 
 // Converte URL/placeholder em File para enviar à API
 async function urlToFile(src, filename) {
@@ -38,18 +32,16 @@ function SpinnerIcon() {
 }
 
 // Linha de stats horizontais
-function StatsRow({ analysis }) {
-  const stats = [
-    { label: "Detectados",  value: analysis.total_detections },
-    { label: "Conf. média", value: formatPct(analysis.avg_confidence) },
-    { label: "Inferência",  value: formatTime(analysis.inference_time_ms) },
-  ];
+function StatsRow({ stats }) {
   return (
-    <div className="grid grid-cols-3 divide-x divide-[#e0ddd6] rounded-xl border border-[#e0ddd6] bg-[#f5f4f0] overflow-hidden">
+    <div className="grid grid-cols-3 divide-x divide-[#e0ddd6] rounded-xl border border-[#e0ddd6] bg-[#f5f4f0]">
       {stats.map((s) => (
-        <div key={s.label} className="flex flex-col items-center py-2.5 px-2">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#9e9e9e]">
-            {s.label}
+        <div key={s.label} className="flex min-w-0 flex-col items-center py-2.5 px-1.5 text-center sm:px-2">
+          <span className="flex items-center gap-1">
+            <span className="text-[9px] font-semibold uppercase leading-tight tracking-normal text-[#9e9e9e] [overflow-wrap:anywhere] sm:text-[10px] sm:tracking-wider">
+              {s.label}
+            </span>
+            {s.info && <InfoTip lines={s.info} />}
           </span>
           <span className="mt-0.5 text-base font-bold text-[#1d5fa8]">{s.value}</span>
         </div>
@@ -60,63 +52,19 @@ function StatsRow({ analysis }) {
 
 // Painel de resultado da galeria
 function ResultPanel({ sample, result }) {
-  const [showDetections, setShowDetections] = useState(false);
-
   return (
     <div className="flex flex-1 flex-col gap-3">
-      {/* Imagem anotada pelo modelo */}
-      <div className="overflow-hidden rounded-xl border border-[#e0ddd6] bg-[#f5f4f0]">
-        <img
-          src={result.annotated_image}
-          alt={`Análise — ${sample.label}`}
-          className="h-56 w-full object-contain"
-        />
-      </div>
+      {/* Imagem com abas, da original ao cariograma (abre no cariograma) */}
+      <ImageTabs result={result} original={sample.src} maxHeightClass="max-h-[60vh]" />
+
+      {/* Cariótipo: fórmula, selo e leitura do resultado */}
+      <KaryotypeSummary karyotype={result.karyotype} warnings={result.warnings} />
 
       {/* Stats horizontais */}
-      <StatsRow analysis={result.analysis} />
+      <StatsRow stats={resultStats(result)} />
 
-      {/* Diagnóstico */}
-      <div className="rounded-xl border border-[#e8f0fb] bg-[#e8f0fb] px-4 py-3">
-        <p className="text-xs font-semibold uppercase tracking-wider text-[#1d5fa8]">
-          Diagnóstico gerado
-        </p>
-        <p className="mt-1 text-sm font-medium text-[#1a1a1a]">
-          {result.analysis.total_detections} cromossomos detectados com confiança média de{" "}
-          {formatPct(result.analysis.avg_confidence)}.
-        </p>
-      </div>
-
-      {/* Detecções individuais — colapsável */}
-      <div className="rounded-xl border border-[#e0ddd6] overflow-hidden">
-        <button
-          onClick={() => setShowDetections((v) => !v)}
-          className="flex w-full items-center justify-between px-4 py-2.5 text-left transition hover:bg-[#f5f4f0]"
-        >
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#6b6b6b]">
-            Detecções individuais ({result.detections.length})
-          </span>
-          <svg
-            width="15" height="15" viewBox="0 0 24 24" fill="none"
-            stroke="#9e9e9e" strokeWidth="2.5"
-            className={`transition-transform duration-200 ${showDetections ? "rotate-180" : ""}`}
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </button>
-        {showDetections && (
-          <div className="max-h-36 overflow-y-auto border-t border-[#e0ddd6]">
-            {result.detections.map((d) => (
-              <div key={d.id} className="flex items-center justify-between border-b border-[#e0ddd6] px-4 py-1.5 last:border-0">
-                <span className="text-xs text-[#1a1a1a]">#{d.id} — {d.class_name}</span>
-                <span className="rounded-full bg-[#e8f0fb] px-2 py-0.5 text-xs font-semibold text-[#1d5fa8]">
-                  {formatPct(d.confidence)}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      {/* Contagem por par — colapsável */}
+      <PairCounts karyotype={result.karyotype} />
 
       {/* Aviso clínico */}
       <div className="flex items-start gap-2 rounded-lg bg-[#f5f4f0] px-3 py-2">
@@ -125,7 +73,7 @@ function ResultPanel({ sample, result }) {
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
         <p className="text-xs text-[#9e9e9e]">
-          Resultado gerado pelo modelo YOLO. Não substitui avaliação clínica especializada.
+          Resultado gerado automaticamente por modelos de visão computacional (detecção e classificação). Não substitui a avaliação de um especialista em citogenética.
         </p>
       </div>
     </div>
@@ -157,7 +105,7 @@ export default function GallerySection() {
       const file = await urlToFile(sample.src, `${sample.label}.jpg`);
       const data = await analyzeImage(file);
       setResult(data);
-    } catch (err) {
+    } catch {
       setError("Não foi possível analisar esta amostra. Tente novamente.");
     } finally {
       setIsAnalyzing(false);
@@ -199,7 +147,7 @@ export default function GallerySection() {
                 />
                 <div className="bg-white px-2 py-1.5 text-left">
                   <p className="text-xs font-semibold text-[#1a1a1a]">{sample.label}</p>
-                  <p className="truncate text-[10px] text-[#9e9e9e]">{sample.description}</p>
+                  <p className="truncate text-[10px] text-[#9e9e9e]" title={sample.description}>{sample.description}</p>
                 </div>
 
                 {/* Check de selecionado */}

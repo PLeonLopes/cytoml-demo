@@ -1,5 +1,7 @@
 import { useState, useRef } from "react";
 import { analyzeImage } from "../services/api";
+import { resultStats } from "../services/result";
+import { ImageTabs, InfoTip, KaryotypeSummary, PairCounts } from "./KaryotypeResult";
 
 function UploadIcon() {
   return (
@@ -19,114 +21,37 @@ function SpinnerIcon({ size = 24 }) {
   );
 }
 
-function formatTime(ms) {
-  if (ms < 1000) return `${Math.round(ms)} ms`;
-  return `${(ms / 1000).toFixed(1)} s`;
-}
-
-function formatPct(value) {
-  return `${(value * 100).toFixed(1)}%`;
-}
-
-function StatCard({ label, value }) {
+function StatCard({ label, value, info }) {
   return (
-    <div className="flex flex-col rounded-lg border border-[#e0ddd6] bg-[#f5f4f0] px-3 py-2.5">
-      <span className="text-[10px] font-semibold uppercase tracking-wider text-[#9e9e9e]">{label}</span>
+    <div className="flex min-w-0 flex-col rounded-lg border border-[#e0ddd6] bg-[#f5f4f0] px-2 py-2.5 sm:px-3">
+      <span className="flex items-center gap-1">
+        <span className="text-[9px] font-semibold uppercase leading-tight tracking-normal text-[#9e9e9e] [overflow-wrap:anywhere] sm:text-[10px] sm:tracking-wider">{label}</span>
+        {info && <InfoTip lines={info} />}
+      </span>
       <span className="mt-0.5 text-base font-bold text-[#1d5fa8]">{value}</span>
     </div>
   );
 }
 
-// Redimensionamento
-const MAX_SIZE = 1024;
-const QUALITY  = 0.85;
-
-function resizeImage(file) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      let { width, height } = img;
-      if (width > MAX_SIZE || height > MAX_SIZE) {
-        if (width > height) {
-          height = Math.round((height * MAX_SIZE) / width);
-          width  = MAX_SIZE;
-        } else {
-          width  = Math.round((width * MAX_SIZE) / height);
-          height = MAX_SIZE;
-        }
-      }
-      const canvas = document.createElement("canvas");
-      canvas.width  = width;
-      canvas.height = height;
-      canvas.getContext("2d").drawImage(img, 0, 0, width, height);
-      canvas.toBlob(
-        (blob) => resolve(new File([blob], file.name, { type: "image/jpeg" })),
-        "image/jpeg",
-        QUALITY
-      );
-    };
-    img.src = url;
-  });
-}
-
 // Painel de resultado
-function ResultPanel({ result, onReset }) {
-  const [showDetections, setShowDetections] = useState(false);
-
+function ResultPanel({ result, original, onReset }) {
   return (
     <div className="flex flex-1 flex-col gap-4">
-      {/* Imagem anotada — maior */}
-      <div className="overflow-hidden rounded-xl border border-[#e0ddd6] bg-[#f5f4f0]">
-        <img
-          src={result.annotated_image}
-          alt="Cariograma anotado pelo modelo"
-          className="h-96 w-full object-contain"
-        />
-      </div>
+      {/* Imagem com abas, da original ao cariograma (abre no cariograma) */}
+      <ImageTabs result={result} original={original} maxHeightClass="max-h-[70vh]" />
+
+      {/* Fórmula, selo e leitura do resultado */}
+      <KaryotypeSummary karyotype={result.karyotype} warnings={result.warnings} />
 
       {/* 3 métricas em linha */}
       <div className="grid grid-cols-3 gap-2">
-        <StatCard label="Detectados"      value={result.analysis.total_detections} />
-        <StatCard label="Conf. média"     value={formatPct(result.analysis.avg_confidence)} />
-        <StatCard label="Inferência"      value={formatTime(result.analysis.inference_time_ms)} />
+        {resultStats(result).map((s) => (
+          <StatCard key={s.label} label={s.label} value={s.value} info={s.info} />
+        ))}
       </div>
 
-      {/* Detecções individuais — colapsável */}
-      <div className="rounded-xl border border-[#e0ddd6] overflow-hidden">
-        <button
-          onClick={() => setShowDetections((v) => !v)}
-          className="flex w-full items-center justify-between px-4 py-3 text-left transition hover:bg-[#f5f4f0]"
-        >
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#6b6b6b]">
-            Detecções individuais ({result.detections.length})
-          </span>
-          <svg
-            width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="#9e9e9e" strokeWidth="2.5"
-            className={`transition-transform duration-200 ${showDetections ? "rotate-180" : ""}`}
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </button>
-
-        {showDetections && (
-          <div className="max-h-44 overflow-y-auto border-t border-[#e0ddd6]">
-            {result.detections.map((d) => (
-              <div
-                key={d.id}
-                className="flex items-center justify-between border-b border-[#e0ddd6] px-4 py-2 last:border-0"
-              >
-                <span className="text-xs text-[#1a1a1a]">#{d.id} — {d.class_name}</span>
-                <span className="rounded-full bg-[#e8f0fb] px-2 py-0.5 text-xs font-semibold text-[#1d5fa8]">
-                  {formatPct(d.confidence)}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      {/* Contagem por par — colapsável */}
+      <PairCounts karyotype={result.karyotype} />
 
       {/* Aviso clínico */}
       <div className="flex items-start gap-2 rounded-lg bg-[#f5f4f0] px-3 py-2.5">
@@ -134,7 +59,7 @@ function ResultPanel({ result, onReset }) {
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
         <p className="text-xs text-[#9e9e9e]">
-          Resultado gerado pelo modelo YOLO. Não substitui avaliação clínica especializada.
+          Resultado gerado automaticamente por modelos de visão computacional (detecção e classificação). Não substitui a avaliação de um especialista em citogenética.
         </p>
       </div>
 
@@ -156,7 +81,6 @@ export default function UploadSection() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult]           = useState(null);
   const [error, setError]             = useState(null);
-  const [imageInfo, setImageInfo]     = useState(null);
   const fileInputRef = useRef(null);
 
   const handleFile = (file) => {
@@ -164,7 +88,6 @@ export default function UploadSection() {
     setImage(file);
     setResult(null);
     setError(null);
-    setImageInfo(null);
     const reader = new FileReader();
     reader.onload = (e) => setPreview(e.target.result);
     reader.readAsDataURL(file);
@@ -182,11 +105,8 @@ export default function UploadSection() {
     setResult(null);
     setError(null);
     try {
-      const originalKB = (image.size / 1024).toFixed(0);
-      const resized     = await resizeImage(image);
-      const resizedKB   = (resized.size / 1024).toFixed(0);
-      setImageInfo({ originalKB, resizedKB });
-      const data = await analyzeImage(resized);
+      // envia o arquivo original: a pipeline analisa exatamente a imagem enviada
+      const data = await analyzeImage(image);
       setResult(data);
     } catch (err) {
       setError(err.message || "Erro ao conectar com o servidor.");
@@ -200,7 +120,6 @@ export default function UploadSection() {
     setPreview(null);
     setResult(null);
     setError(null);
-    setImageInfo(null);
   };
 
   return (
@@ -218,7 +137,7 @@ export default function UploadSection() {
         </div>
 
         {/* Painel principal — dois quadrados */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
           {/* ── Quadrado 1: Upload ── */}
           <div className="flex flex-col rounded-2xl border border-[#e0ddd6] bg-white shadow-sm">
             <div className="border-b border-[#e0ddd6] px-6 py-4">
@@ -270,9 +189,9 @@ export default function UploadSection() {
 
                   <div className="flex items-center justify-between">
                     <p className="truncate text-xs text-[#9e9e9e]">{image?.name}</p>
-                    {imageInfo && (
+                    {image && (
                       <span className="ml-2 shrink-0 rounded-full bg-[#e8f0fb] px-2 py-0.5 text-[10px] font-medium text-[#1d5fa8]">
-                        {imageInfo.originalKB} KB → {imageInfo.resizedKB} KB
+                        {(image.size / 1024).toFixed(0)} KB
                       </span>
                     )}
                   </div>
@@ -302,7 +221,7 @@ export default function UploadSection() {
           <div className="flex flex-col rounded-2xl border border-[#e0ddd6] bg-white shadow-sm">
             <div className="border-b border-[#e0ddd6] px-6 py-4">
               <h3 className="text-sm font-semibold text-[#1a1a1a]">Resultado da Análise</h3>
-              <p className="text-xs text-[#9e9e9e]">Gerado automaticamente pelo modelo YOLO</p>
+              <p className="text-xs text-[#9e9e9e]">Gerado automaticamente pelos modelos de detecção e classificação</p>
             </div>
 
             <div className="flex flex-1 flex-col p-6">
@@ -340,7 +259,7 @@ export default function UploadSection() {
               )}
 
               {result && !isAnalyzing && (
-                <ResultPanel result={result} onReset={handleReset} />
+                <ResultPanel result={result} original={preview} onReset={handleReset} />
               )}
             </div>
           </div>
