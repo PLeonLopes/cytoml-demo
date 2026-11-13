@@ -17,8 +17,10 @@ export default function Footer() {
           </div>  
 
           {/* Info */}
-          <p className="text-center text-xs text-[#9e9e9e]">
-            Trabalho de Conclusão de Curso 2026.2 · Demonstração de Cariotipagem Automatizada
+          <p className="flex flex-col items-center gap-1 text-center text-xs text-[#9e9e9e] sm:flex-row sm:gap-3">
+            <span>Trabalho de Conclusão de Curso 2026.2</span>
+            <span className="hidden h-3 w-px bg-[#d0cdc6] sm:block" />
+            <span>Demonstração de Cariotipagem Automatizada</span>
           </p>
 
           {/* Aviso clínico */}

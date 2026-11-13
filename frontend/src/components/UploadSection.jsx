@@ -50,7 +50,7 @@ function ResultPanel({ result, original, onReset }) {
         ))}
       </div>
 
-      {/* Contagem por par — colapsável */}
+      {/* Contagem por par (colapsável) */}
       <PairCounts karyotype={result.karyotype} />
 
       {/* Aviso clínico */}
@@ -136,7 +136,7 @@ export default function UploadSection() {
           </p>
         </div>
 
-        {/* Painel principal — dois quadrados */}
+        {/* Painel principal: dois quadrados */}
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
           {/* ── Quadrado 1: Upload ── */}
           <div className="flex flex-col rounded-2xl border border-[#e0ddd6] bg-white shadow-sm">

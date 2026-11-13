@@ -86,7 +86,7 @@ function SummaryRow({ label, reference, children }) {
   );
 }
 
-// Uma alteração de autossomo: "+21  cromossomo 21 · 3 cópias"
+// Uma alteração de autossomo: "+21  Cromossomo 21 (3 cópias)"
 function AutosomeChange({ className, alert }) {
   const delta = alert.observed - alert.expected;
   const copies = alert.observed === 1 ? "1 cópia" : `${alert.observed} cópias`;
@@ -96,7 +96,7 @@ function AutosomeChange({ className, alert }) {
         {delta > 0 ? "+" : "−"}{pairLabel(className)}
       </span>
       <span>
-        Cromossomo {pairLabel(className)} <span className="text-[#6b6b6b]">· {copies}</span>
+        Cromossomo {pairLabel(className)} <span className="text-[#6b6b6b]">({copies})</span>
       </span>
     </div>
   );

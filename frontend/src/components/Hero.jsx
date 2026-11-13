@@ -16,11 +16,15 @@ export default function Hero() {
       <div className="pointer-events-none absolute -top-32 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-[#1d5fa8] opacity-[0.07] blur-3xl" />
 
       <div className="relative mx-auto max-w-6xl px-4 md:px-6 text-center">
-        {/* Badge — some no mobile */}
+        {/* Badge (some no mobile) */}
         <div className="mb-5 hidden sm:inline-flex items-center gap-2 rounded-full border border-[#1d5fa8]/20 bg-[#e8f0fb] px-4 py-1.5">
           <span className="h-1.5 w-1.5 rounded-full bg-[#1d5fa8]" />
-          <span className="text-xs font-medium uppercase tracking-widest text-[#1d5fa8]">
-            Visão Computacional · Citogenética · Aprendizado Profundo
+          <span className="flex items-center gap-3 text-xs font-medium uppercase tracking-widest text-[#1d5fa8]">
+            Visão Computacional
+            <span className="h-3 w-px bg-[#1d5fa8]/30" />
+            Citogenética
+            <span className="h-3 w-px bg-[#1d5fa8]/30" />
+            Aprendizado Profundo
           </span>
           <span className="h-1.5 w-1.5 rounded-full bg-[#1d5fa8]" />
         </div>

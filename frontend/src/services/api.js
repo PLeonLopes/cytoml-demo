@@ -35,7 +35,7 @@ export async function analyzeImage(imageFile) {
   const response = await fetch(`${API_URL}/api/analysis/analyze/`, {
     method: "POST",
     body: formData,
-    // Não definir Content-Type manualmente — o browser define sozinho com o boundary do multipart
+    // Não definir Content-Type manualmente: o browser define sozinho com o boundary do multipart
   });
 
   // Lê o corpo antes de checar o status: os erros 400 trazem a mensagem do backend
