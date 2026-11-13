@@ -1,0 +1,34 @@
+# O que o `gcloud run deploy --source` NÃO envia ao Cloud Build
+# (mesmas regras do .dockerignore; sem este arquivo, a .venv local também seria enviada)
+.gcloudignore
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Ambientes virtuais
+.venv/
+venv/
+env/
+
+# Django
+*.log
+db.sqlite3
+media/
+
+# Testes
+.pytest_cache/
+.coverage
+htmlcov/
+apps/analysis/tests/
+
+# IDEs e sistema operacional
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
