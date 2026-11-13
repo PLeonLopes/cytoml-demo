@@ -50,7 +50,7 @@ function ResultPanel({ result, original, onReset }) {
         ))}
       </div>
 
-      {/* Contagem por par — colapsável */}
+      {/* Contagem por par (colapsável) */}
       <PairCounts karyotype={result.karyotype} />
 
       {/* Aviso clínico */}
@@ -130,13 +130,13 @@ export default function UploadSection() {
           <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-[#1d5fa8]">
             Análise de Imagem
           </p>
-          <h2 className="text-3xl font-bold text-[#1a1a1a]">Envie o Cariograma</h2>
+          <h2 className="text-3xl font-bold text-[#1a1a1a]">Envie a Metáfase</h2>
           <p className="mt-2 text-[#6b6b6b]">
-            Faça o upload da imagem do exame e receba a análise automática do modelo.
+            Faça o upload da imagem e receba o cariótipo montado automaticamente.
           </p>
         </div>
 
-        {/* Painel principal — dois quadrados */}
+        {/* Painel principal: dois quadrados */}
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
           {/* ── Quadrado 1: Upload ── */}
           <div className="flex flex-col rounded-2xl border border-[#e0ddd6] bg-white shadow-sm">
@@ -210,7 +210,7 @@ export default function UploadSection() {
                     disabled={isAnalyzing}
                     className="mt-auto flex items-center justify-center gap-2 rounded-md bg-[#1d5fa8] py-2.5 text-sm font-semibold text-white transition-all hover:bg-[#174d8a] disabled:cursor-not-allowed disabled:opacity-60 active:scale-95"
                   >
-                    {isAnalyzing ? <><SpinnerIcon size={20} /> Analisando...</> : "Analisar Cariograma"}
+                    {isAnalyzing ? <><SpinnerIcon size={20} /> Analisando...</> : "Analisar Imagem"}
                   </button>
                 </div>
               )}
@@ -242,7 +242,7 @@ export default function UploadSection() {
                 <div className="flex flex-1 flex-col items-center justify-center min-h-[380px]">
                   <div className="mb-4 text-[#1d5fa8]"><SpinnerIcon /></div>
                   <p className="text-sm font-medium text-[#1a1a1a]">Processando imagem...</p>
-                  <p className="mt-1 text-xs text-[#9e9e9e]">O modelo está detectando os cromossomos</p>
+                  <p className="mt-1 text-xs text-[#9e9e9e]">Detectando e classificando os cromossomos</p>
                 </div>
               )}
 

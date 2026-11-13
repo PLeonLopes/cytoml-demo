@@ -16,25 +16,29 @@ export default function Hero() {
       <div className="pointer-events-none absolute -top-32 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-[#1d5fa8] opacity-[0.07] blur-3xl" />
 
       <div className="relative mx-auto max-w-6xl px-4 md:px-6 text-center">
-        {/* Badge — some no mobile */}
+        {/* Badge (some no mobile) */}
         <div className="mb-5 hidden sm:inline-flex items-center gap-2 rounded-full border border-[#1d5fa8]/20 bg-[#e8f0fb] px-4 py-1.5">
           <span className="h-1.5 w-1.5 rounded-full bg-[#1d5fa8]" />
-          <span className="text-xs font-medium uppercase tracking-widest text-[#1d5fa8]">
-            Visão Computacional · Citogenética · Aprendizado Profundo
+          <span className="flex items-center gap-3 text-xs font-medium uppercase tracking-widest text-[#1d5fa8]">
+            Visão Computacional
+            <span className="h-3 w-px bg-[#1d5fa8]/30" />
+            Citogenética
+            <span className="h-3 w-px bg-[#1d5fa8]/30" />
+            Aprendizado Profundo
           </span>
           <span className="h-1.5 w-1.5 rounded-full bg-[#1d5fa8]" />
         </div>
 
         {/* Título */}
-        <h1 className="mx-auto mb-4 max-w-3xl text-3xl md:text-5xl font-bold leading-tight tracking-tight text-[#1a1a1a]">
-          Análise Automatizada de{" "}
-          <span className="text-[#1d5fa8]">Cariótipos</span> e identificação de{" "}
+        <h1 className="mx-auto mb-4 max-w-4xl text-3xl md:text-[2.75rem] font-bold leading-tight tracking-tight text-[#1a1a1a]">
+          Uso de Visão Computacional para Análise Automatizada de{" "}
+          <span className="text-[#1d5fa8]">Cariótipos</span> e Identificação de{" "}
           <span className="text-[#1d5fa8]">Aneuploidias</span>
         </h1>
 
         {/* Subtítulo */}
         <p className="mx-auto mb-8 max-w-2xl text-base md:text-lg leading-relaxed text-[#6b6b6b]">
-          Sistema com modelo YOLO para detecção e classificação automática de cromossomos. Faça o upload de um exame e obtenha a análise em segundos.
+          Detecção com YOLO26m e classificação com ResNet-50 para montar o cariótipo automaticamente. Envie uma metáfase e obtenha a análise em segundos.
         </p>
 
         {/* Ações */}

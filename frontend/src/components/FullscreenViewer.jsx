@@ -220,7 +220,14 @@ export default function FullscreenViewer({ steps, sources, initialKey, header, c
 
       {/* Rodapé: atalhos e controles de zoom */}
       <div className="flex items-center justify-between gap-3 border-t border-white/10 px-4 py-2 text-xs text-white/60 sm:px-6">
-        <span className="hidden sm:inline">← → muda de etapa · roda do mouse = zoom · arrastar = mover · duplo clique = ajustar · Esc fecha</span>
+        <span className="hidden items-center gap-4 sm:flex">
+          {[["← →", "etapas"], ["roda do mouse", "zoom"], ["arrastar", "mover"], ["duplo clique", "ajustar"], ["Esc", "fechar"]].map(([key, action]) => (
+            <span key={key} className="flex items-center gap-1.5">
+              <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 font-sans text-[11px] text-white/80">{key}</kbd>
+              {action}
+            </span>
+          ))}
+        </span>
         <span className="sm:hidden">Arraste para mover</span>
         <div className="flex items-center gap-1">
           <button onClick={() => zoomAt(0.8)} aria-label="Diminuir zoom" className="rounded-md px-2.5 py-1 text-base text-white/80 hover:bg-white/10">−</button>

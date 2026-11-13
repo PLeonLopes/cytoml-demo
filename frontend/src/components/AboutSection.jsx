@@ -4,25 +4,25 @@ export default function AboutSection() {
       number: "01",
       title: "Upload da Imagem",
       description:
-        "O usuário envia a imagem do cariograma no formato JPG, PNG ou TIFF.",
+        "O usuário envia a imagem de uma metáfase no formato JPG, PNG ou TIFF.",
     },
     {
       number: "02",
-      title: "Processamento pelo Modelo",
+      title: "Pré-processamento",
       description:
-        "O modelo YOLO realiza a detecção e classificação de cada cromossomo na imagem.",
+        "Filtro de mediana e CLAHE reduzem o ruído e realçam as bandas dos cromossomos.",
     },
     {
       number: "03",
-      title: "Análise e Classificação",
+      title: "Detecção e Classificação",
       description:
-        "Os cromossomos são agrupados por pares e classificados conforme a nomenclatura citogenética.",
+        "O YOLO26m localiza cada cromossomo e a ResNet-50 o classifica em um dos 24 tipos.",
     },
     {
       number: "04",
-      title: "Resultado",
+      title: "Cariótipo",
       description:
-        "O sistema exibe o laudo automático com os cromossomos detectados e o diagnóstico gerado.",
+        "Os cromossomos são organizados em pares no cariograma e as alterações numéricas são sinalizadas.",
     },
   ];
 
@@ -41,18 +41,20 @@ export default function AboutSection() {
             <div className="space-y-4 text-[#6b6b6b]">
               <p className="leading-relaxed">
                 O <span className="font-semibold text-[#1a1a1a]">CytoML</span>{" "}
-                é um sistema desenvolvido como Trabalho de Conclusão de Curso
+                é uma demonstração desenvolvida como Trabalho de Conclusão de Curso
                 que aplica técnicas de visão computacional para automatizar o
                 processo de análise de cariogramas humanos.
               </p>
               <p className="leading-relaxed">
-                Utilizando o modelo{" "}
-                <span className="font-semibold text-[#1a1a1a]">YOLO</span>{" "}
-                (You Only Look Once), o sistema é capaz de detectar imagens citogenéticas, reduzindo o
+                Utilizando o{" "}
+                <span className="font-semibold text-[#1a1a1a]">YOLO26m</span>{" "}
+                para detectar os cromossomos e a{" "}
+                <span className="font-semibold text-[#1a1a1a]">ResNet-50</span>{" "}
+                para classificá-los, a demonstração monta o cariótipo e sinaliza aneuploidias, reduzindo o
                 tempo e a subjetividade do processo manual.
               </p>
               <p className="leading-relaxed">
-                Essa demo foi desenvolvido em{" "}
+                Essa demonstração foi desenvolvida em{" "}
                 <span className="font-semibold text-[#1a1a1a]">
                   Django REST Framework
                 </span>{" "}
@@ -60,7 +62,7 @@ export default function AboutSection() {
                 <span className="font-semibold text-[#1a1a1a]">
                   React + Vite
                 </span>
-                , compondo um sistema completo de ponta a ponta.
+                , de ponta a ponta.
               </p>
             </div>
           </div>

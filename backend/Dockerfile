@@ -6,15 +6,6 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Dependências de sistema necessárias para compilar pacotes Python e libpq (postgres)
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        build-essential \
-        libgl1 \
-        libglib2.0-0 \
-    && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
 COPY requirements.txt .
 
 RUN pip install --upgrade pip && \
@@ -24,6 +15,6 @@ COPY . .
 
 EXPOSE 8080
 
-# Config GCP
-CMD ["sh", "-c", "python manage.py migrate && gunicorn cytoml_proj.wsgi:application --bind 0.0.0.0:${PORT:-8080} --workers 1 --timeout 300"]
-
+# 1 worker (cada processo carrega os dois modelos, ~1,3 GB) com 2 threads, que dividem os
+# mesmos modelos; timeout alinhado ao do Cloud Run. A API não usa banco, então não há migrate.
+CMD ["sh", "-c", "gunicorn cytoml_proj.wsgi:application --bind 0.0.0.0:${PORT:-8080} --workers 1 --threads 2 --timeout 120"]

@@ -6,7 +6,7 @@ import { ImageTabs, InfoTip, KaryotypeSummary, PairCounts } from "./KaryotypeRes
 // Metáfases do conjunto de teste, nunca vistas no treino.
 // A descrição traz a anotação do dataset, ou seja, o resultado esperado.
 const SAMPLES = [
-  { id: 1, src: "/samples/1053833.jpg", label: "Amostra 01", description: "Normal (46,XX) · Figura 4 do artigo" },
+  { id: 1, src: "/samples/1053833.jpg", label: "Amostra 01", description: "Normal (46,XX)", note: "Figura 4 do artigo" },
   { id: 2, src: "/samples/1091464.jpg", label: "Amostra 02", description: "Normal (46,XY)" },
   { id: 3, src: "/samples/1055911.jpg", label: "Amostra 03", description: "Síndrome de Down (47,XY,+21)" },
   { id: 4, src: "/samples/1050431.jpg", label: "Amostra 04", description: "Síndrome de Edwards (47,XX,+18)" },
@@ -63,7 +63,7 @@ function ResultPanel({ sample, result }) {
       {/* Stats horizontais */}
       <StatsRow stats={resultStats(result)} />
 
-      {/* Contagem por par — colapsável */}
+      {/* Contagem por par (colapsável) */}
       <PairCounts karyotype={result.karyotype} />
 
       {/* Aviso clínico */}
@@ -122,7 +122,7 @@ export default function GallerySection() {
           </p>
           <h2 className="text-3xl font-bold text-[#1a1a1a]">Exemplos de Análise</h2>
           <p className="mt-2 text-[#6b6b6b]">
-            Clique em uma das amostras abaixo para ver o modelo em ação.
+            Clique em uma das amostras do conjunto de teste para ver a análise em ação.
           </p>
         </div>
 
@@ -150,6 +150,13 @@ export default function GallerySection() {
                   <p className="truncate text-[10px] text-[#9e9e9e]" title={sample.description}>{sample.description}</p>
                 </div>
 
+                {/* Selo de referência ao artigo */}
+                {sample.note && (
+                  <span className="absolute left-1.5 top-1.5 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-semibold text-[#1d5fa8] shadow-sm">
+                    {sample.note}
+                  </span>
+                )}
+
                 {/* Check de selecionado */}
                 {selected?.id === sample.id && (
                   <div className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#1d5fa8]">
@@ -168,8 +175,11 @@ export default function GallerySection() {
               <h3 className="text-sm font-semibold text-[#1a1a1a]">
                 {selected ? selected.label : "Resultado"}
               </h3>
-              <p className="text-xs text-[#9e9e9e]">
+              <p className="flex flex-wrap items-center gap-2 text-xs text-[#9e9e9e]">
                 {selected ? selected.description : "Selecione uma amostra ao lado"}
+                {selected?.note && (
+                  <span className="rounded-full bg-[#e8f0fb] px-2 py-0.5 text-[10px] font-semibold text-[#1d5fa8]">{selected.note}</span>
+                )}
               </p>
             </div>
 
