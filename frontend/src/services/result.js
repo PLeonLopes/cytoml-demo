@@ -10,6 +10,15 @@ export function resultStats(result) {
   return [
     { label: "Cromossomos",     value: result.karyotype.total },
     { label: "Pares em alerta", value: Object.keys(result.karyotype.alerts).length },
-    { label: "Tempo",           value: formatTime(result.timing_ms.total) },
+    {
+      label: "Tempo",
+      value: formatTime(result.timing_ms.total),
+      // detalhamento mostrado no (i) do card
+      info: [
+        ["Pré-processamento", formatTime(result.timing_ms.preprocess)],
+        ["Detecção e classificação", formatTime(result.timing_ms.inference)],
+        ["Imagens e cariograma", formatTime(result.timing_ms.render)],
+      ],
+    },
   ];
 }

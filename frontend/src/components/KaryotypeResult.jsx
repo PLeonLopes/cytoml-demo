@@ -26,6 +26,29 @@ const TABS = [
   { key: "karyogram",    label: "Cariograma" },
 ];
 
+// Ícone (i) com um balão de detalhes: aparece ao passar o mouse ou ao tocar (foco), alinhado à direita
+export function InfoTip({ lines }) {
+  return (
+    <span className="group relative inline-flex">
+      <button
+        type="button"
+        aria-label="Detalhes"
+        className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#c4c1ba] text-[8px] font-bold normal-case leading-none text-[#9e9e9e] transition hover:border-[#1d5fa8] hover:text-[#1d5fa8] focus:border-[#1d5fa8] focus:text-[#1d5fa8] focus:outline-none"
+      >
+        i
+      </button>
+      <span className="pointer-events-none invisible absolute bottom-full right-0 z-20 mb-2 w-max max-w-[16rem] rounded-lg border border-[#e0ddd6] bg-white px-3 py-2 text-left text-[11px] font-normal normal-case tracking-normal text-[#1a1a1a] opacity-0 shadow-lg transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+        {lines.map(([label, value]) => (
+          <span key={label} className="flex justify-between gap-4 py-0.5">
+            <span className="text-[#6b6b6b]">{label}</span>
+            <span className="font-semibold tabular-nums">{value}</span>
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+}
+
 export function StatusBadge({ code }) {
   const status = STATUS[code] ?? STATUS.no_detections;
   return (

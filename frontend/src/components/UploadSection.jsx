@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { analyzeImage } from "../services/api";
 import { resultStats } from "../services/result";
-import { ImageTabs, KaryotypeSummary, PairCounts } from "./KaryotypeResult";
+import { ImageTabs, InfoTip, KaryotypeSummary, PairCounts } from "./KaryotypeResult";
 
 function UploadIcon() {
   return (
@@ -21,10 +21,13 @@ function SpinnerIcon({ size = 24 }) {
   );
 }
 
-function StatCard({ label, value }) {
+function StatCard({ label, value, info }) {
   return (
     <div className="flex min-w-0 flex-col rounded-lg border border-[#e0ddd6] bg-[#f5f4f0] px-2 py-2.5 sm:px-3">
-      <span className="text-[9px] font-semibold uppercase leading-tight tracking-normal text-[#9e9e9e] [overflow-wrap:anywhere] sm:text-[10px] sm:tracking-wider">{label}</span>
+      <span className="flex items-center gap-1">
+        <span className="text-[9px] font-semibold uppercase leading-tight tracking-normal text-[#9e9e9e] [overflow-wrap:anywhere] sm:text-[10px] sm:tracking-wider">{label}</span>
+        {info && <InfoTip lines={info} />}
+      </span>
       <span className="mt-0.5 text-base font-bold text-[#1d5fa8]">{value}</span>
     </div>
   );
@@ -77,7 +80,7 @@ function ResultPanel({ result, original, onReset }) {
       {/* 3 métricas em linha */}
       <div className="grid grid-cols-3 gap-2">
         {resultStats(result).map((s) => (
-          <StatCard key={s.label} label={s.label} value={s.value} />
+          <StatCard key={s.label} label={s.label} value={s.value} info={s.info} />
         ))}
       </div>
 
