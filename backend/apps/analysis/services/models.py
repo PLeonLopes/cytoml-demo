@@ -26,3 +26,7 @@ def get_pipeline() -> KaryotypePipeline:
                 _pipeline = KaryotypePipeline(settings.DETECTOR_MODEL_PATH, settings.CLASSIFIER_MODEL_PATH)
                 logger.info("Modelos carregados.")
     return _pipeline
+
+
+def models_loaded() -> bool:
+    return _pipeline is not None
