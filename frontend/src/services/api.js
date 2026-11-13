@@ -10,30 +10,6 @@ function errorMessage(error, fallback) {
   return typeof message === "string" && message ? message : fallback;
 }
 
-// TEMPORÁRIO (até a P6): acrescenta os campos do formato antigo da API, para os componentes
-// atuais continuarem funcionando sem mudanças enquanto passam a usar os campos novos.
-function withLegacyFields(data) {
-  const confidences = data.chromosomes.map((c) => c.detection_confidence);
-  const total = confidences.length;
-  return {
-    ...data,
-    annotated_image: data.images.annotated,
-    analysis: {
-      total_detections: total,
-      inference_time_ms: data.timing_ms.total,
-      avg_confidence: total ? confidences.reduce((a, b) => a + b, 0) / total : 0,
-      min_confidence: total ? Math.min(...confidences) : 0,
-      max_confidence: total ? Math.max(...confidences) : 0,
-    },
-    detections: data.chromosomes.map((c) => ({
-      id: c.id,
-      class_name: c.pair,
-      confidence: c.detection_confidence,
-      bbox: c.bbox,
-    })),
-  };
-}
-
 // Health Check endpoint
 export async function checkHealth() {
   const response = await fetch(`${API_URL}/api/analysis/health/`);
@@ -69,7 +45,7 @@ export async function analyzeImage(imageFile) {
     throw new Error(errorMessage(json?.error, `Erro ao analisar imagem (HTTP ${response.status}).`));
   }
 
-  return withLegacyFields(json.data);
+  return json.data;
   // Retorna o JSON da API:
   // {
   //   karyotype: { formula, status, status_code, findings, total, counts, alerts },
@@ -79,5 +55,4 @@ export async function analyzeImage(imageFile) {
   //   model: { detector, classifier, detector_conf },
   //   warnings: [...]
   // }
-  // mais os campos antigos (annotated_image, analysis, detections) de withLegacyFields.
 }
